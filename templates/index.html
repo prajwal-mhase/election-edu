@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoteWise – Election Education Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron: #FF6B00;
+  --saffron-light: #FF9040;
+  --ink: #0D0D0D;
+  --cream: #FFF8F0;
+  --green: #138808;
+  --blue: #000080;
+  --white: #FFFFFF;
+  --muted: #6B6B6B;
+  --card-bg: #FFFCF7;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 5%;
+  background: rgba(255,248,240,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--saffron);
+}
+.logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--saffron); letter-spacing: -1px; }
+.logo span { color: var(--green); }
+nav ul { display: flex; gap: 2rem; list-style: none; }
+nav ul a { text-decoration: none; color: var(--ink); font-weight: 500; font-size: 0.95rem; transition: color 0.2s; }
+nav ul a:hover { color: var(--saffron); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 8rem 5% 4rem;
+  gap: 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -100px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(255,107,0,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(255,107,0,0.1); border: 1px solid rgba(255,107,0,0.3);
+  color: var(--saffron); font-size: 0.8rem; font-weight: 500;
+  padding: 0.4rem 1rem; border-radius: 100px; margin-bottom: 1.5rem;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.8rem, 5vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+}
+.hero h1 em { font-style: normal; color: var(--saffron); }
+.hero p { font-size: 1.1rem; color: var(--muted); line-height: 1.8; max-width: 480px; margin-bottom: 2.5rem; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--saffron); color: var(--white);
+  padding: 1rem 2.2rem; border-radius: 8px;
+  text-decoration: none; font-weight: 500; font-size: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(255,107,0,0.3);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,107,0,0.4); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: transparent; color: var(--ink);
+  padding: 1rem 2.2rem; border-radius: 8px;
+  text-decoration: none; font-weight: 500; font-size: 1rem;
+  border: 2px solid var(--ink); margin-left: 1rem;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { background: var(--ink); color: var(--white); }
+.hero-visual {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.tricolor-circle {
+  width: 420px; height: 420px; border-radius: 50%;
+  background: conic-gradient(var(--saffron) 0deg 120deg, var(--white) 120deg 240deg, var(--green) 240deg 360deg);
+  display: flex; align-items: center; justify-content: center;
+  animation: slowSpin 20s linear infinite;
+  box-shadow: 0 0 60px rgba(0,0,0,0.1);
+}
+.circle-inner {
+  width: 300px; height: 300px; border-radius: 50%;
+  background: var(--cream);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  animation: slowSpin 20s linear infinite reverse;
+}
+.circle-inner .ashoka { font-size: 5rem; }
+.circle-inner .subtitle { font-size: 0.85rem; color: var(--muted); font-family: 'DM Sans', sans-serif; }
+@keyframes slowSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* STATS BAR */
+.stats {
+  background: var(--ink);
+  display: flex; justify-content: center; gap: 5rem; flex-wrap: wrap;
+  padding: 2.5rem 5%;
+}
+.stat { text-align: center; color: var(--white); }
+.stat .number { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; color: var(--saffron); }
+.stat .label { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 0.2rem; }
+
+/* SECTIONS */
+section { padding: 6rem 5%; }
+.section-tag { font-size: 0.8rem; font-weight: 500; color: var(--saffron); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem; }
+.section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; margin-bottom: 1.5rem; line-height: 1.15; }
+
+/* MODULES GRID */
+.modules { background: var(--white); }
+.modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+.module-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 16px; padding: 2.5rem;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer; position: relative; overflow: hidden;
+}
+.module-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+}
+.module-card.orange::before { background: var(--saffron); }
+.module-card.green::before { background: var(--green); }
+.module-card.blue::before { background: var(--blue); }
+.module-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+.module-icon { font-size: 2.5rem; margin-bottom: 1.2rem; }
+.module-card h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 0.8rem; }
+.module-card p { color: var(--muted); font-size: 0.95rem; line-height: 1.7; }
+.module-link { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--saffron); font-weight: 500; font-size: 0.9rem; margin-top: 1.2rem; text-decoration: none; }
+
+/* AI CHAT */
+.ai-section { background: var(--ink); color: var(--white); }
+.ai-section .section-title { color: var(--white); }
+.chat-container {
+  max-width: 700px;
+  margin: 3rem auto 0;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.chat-messages {
+  height: 320px; overflow-y: auto; padding: 2rem;
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.chat-msg {
+  padding: 1rem 1.3rem; border-radius: 12px; font-size: 0.95rem; line-height: 1.6; max-width: 85%;
+  animation: fadeUp 0.3s ease;
+}
+.chat-msg.bot { background: rgba(255,107,0,0.15); border: 1px solid rgba(255,107,0,0.2); align-self: flex-start; }
+.chat-msg.user { background: var(--saffron); align-self: flex-end; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.chat-input-area {
+  display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,0.1);
+}
+.chat-input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--white); font-size: 0.95rem; padding: 1.2rem 1.5rem;
+  font-family: 'DM Sans', sans-serif;
+}
+.chat-input::placeholder { color: rgba(255,255,255,0.35); }
+.chat-send {
+  background: var(--saffron); border: none; cursor: pointer;
+  color: var(--white); padding: 1rem 1.8rem; font-weight: 500;
+  font-size: 0.9rem; transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.chat-send:hover { background: var(--saffron-light); }
+.suggested-questions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.5rem; justify-content: center; }
+.sq-btn {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.8); padding: 0.5rem 1rem; border-radius: 100px;
+  font-size: 0.8rem; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.sq-btn:hover { background: var(--saffron); border-color: var(--saffron); color: white; }
+
+/* HOW IT WORKS */
+.steps { counter-reset: step; }
+.steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-top: 3rem; }
+.step {
+  text-align: center; padding: 2rem;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.06);
+  counter-increment: step;
+}
+.step-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--saffron); color: white;
+  font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.2rem;
+}
+.step h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 0.6rem; }
+.step p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+
+/* FOOTER */
+footer {
+  background: var(--ink); color: rgba(255,255,255,0.6);
+  text-align: center; padding: 2.5rem 5%;
+  font-size: 0.85rem;
+}
+footer strong { color: var(--saffron); }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .hero { grid-template-columns: 1fr; text-align: center; }
+  .hero-visual { order: -1; }
+  .tricolor-circle { width: 240px; height: 240px; }
+  .circle-inner { width: 170px; height: 170px; }
+  .circle-inner .ashoka { font-size: 3rem; }
+  .stats { gap: 2rem; }
+  .btn-secondary { margin-left: 0; margin-top: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Vote<span>Wise</span></div>
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/journey">Journey</a></li>
+    <li><a href="/quiz">Quiz</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Understand Your <em>Vote.</em> Shape Your Future.</h1>
+    <p>An interactive election education platform that explains India's democratic process — from voter registration to counting day — in a clear, engaging way for every citizen.</p>
+    <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+      <a href="/journey" class="btn-primary">Explore the Journey →</a>
+      <a href="/quiz" class="btn-secondary">Test Your Knowledge</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="tricolor-circle">
+      <div class="circle-inner">
+        <div class="ashoka">☸</div>
+        <div style="font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:var(--blue);">Democracy</div>
+        <div class="subtitle">of the people</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="number">968M+</div><div class="label">Registered Voters</div></div>
+  <div class="stat"><div class="number">543</div><div class="label">Lok Sabha Seats</div></div>
+  <div class="stat"><div class="number">1.4M+</div><div class="label">Polling Stations</div></div>
+  <div class="stat"><div class="number">75+</div><div class="label">Years of Democracy</div></div>
+</div>
+
+<!-- MODULES -->
+<section class="modules">
+  <div class="section-tag">What You'll Learn</div>
+  <div class="section-title">Three Pillars of<br>Election Knowledge</div>
+  <div class="modules-grid">
+    <div class="module-card orange">
+      <div class="module-icon">🗳️</div>
+      <h3>Voter Rights & Registration</h3>
+      <p>Learn who can vote, how to register on the electoral roll, what documents you need, and how to check your voter ID status.</p>
+      <a href="/journey#register" class="module-link">Learn more →</a>
+    </div>
+    <div class="module-card green">
+      <div class="module-icon">📊</div>
+      <h3>The Election Process</h3>
+      <p>Understand how elections are announced, how candidates file nominations, how EVMs work, and how votes are counted.</p>
+      <a href="/journey" class="module-link">See the journey →</a>
+    </div>
+    <div class="module-card blue">
+      <div class="module-icon">🧠</div>
+      <h3>Test Your Knowledge</h3>
+      <p>Put your learning to the test with our interactive quiz covering key facts about India's electoral system and democracy.</p>
+      <a href="/quiz" class="module-link">Take the quiz →</a>
+    </div>
+  </div>
+</section>
+
+<!-- AI CHAT -->
+<section class="ai-section">
+  <div style="text-align:center;">
+    <div class="section-tag" style="color: rgba(255,107,0,0.9);">AI-Powered</div>
+    <div class="section-title">Ask ElectionBot Anything</div>
+    <p style="color:rgba(255,255,255,0.6); max-width:500px; margin:0 auto;">Have a question about elections, voting rights, or democracy? Our AI assistant — powered by Google Gemini — has answers.</p>
+  </div>
+  <div class="chat-container">
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">👋 Hi! I'm ElectionBot. Ask me anything about India's election process — voting, EVM, constituencies, Election Commission, and more!</div>
+    </div>
+    <div class="chat-input-area">
+      <input class="chat-input" id="chatInput" placeholder="e.g. How does vote counting work?" />
+      <button class="chat-send" onclick="sendMessage()">Ask →</button>
+    </div>
+  </div>
+  <div class="suggested-questions">
+    <button class="sq-btn" onclick="askSuggested('What is NOTA?')">What is NOTA?</button>
+    <button class="sq-btn" onclick="askSuggested('How do EVMs work?')">How do EVMs work?</button>
+    <button class="sq-btn" onclick="askSuggested('How do I register to vote in India?')">How to register?</button>
+    <button class="sq-btn" onclick="askSuggested('What is the Model Code of Conduct?')">Model Code of Conduct</button>
+    <button class="sq-btn" onclick="askSuggested('What is the role of the Election Commission?')">Election Commission</button>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="steps">
+  <div class="section-tag">Simple Steps</div>
+  <div class="section-title">How India's<br>Election Works</div>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Schedule Announced</h3>
+      <p>The Election Commission of India announces the election schedule, triggering the Model Code of Conduct.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Nomination Filing</h3>
+      <p>Candidates file nomination papers, which are scrutinized. They may withdraw within a specified period.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Campaigning</h3>
+      <p>Parties and candidates campaign to win voter support. Campaigning stops 48 hours before polling.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Polling Day</h3>
+      <p>Voters visit their designated booth, verify their ID, and cast their vote on an EVM machine.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <h3>Vote Counting</h3>
+      <p>EVMs are transported to counting centers and votes are tallied under strict observation.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <h3>Result Declaration</h3>
+      <p>The candidate with the most votes in each constituency is declared the winner.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p style="margin-top:0.5rem;">Making democracy accessible to every Indian citizen 🇮🇳</p>
+</footer>
+
+<script>
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const question = input.value.trim();
+  if (!question) return;
+  appendMessage(question, 'user');
+  input.value = '';
+  appendMessage('Thinking...', 'bot', 'loading');
+  try {
+    const res = await fetch('/api/ask', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({question})
+    });
+    const data = await res.json();
+    document.querySelector('.chat-msg.loading')?.remove();
+    appendMessage(data.answer || data.error, 'bot');
+  } catch {
+    document.querySelector('.chat-msg.loading')?.remove();
+    appendMessage('Sorry, something went wrong. Please try again.', 'bot');
+  }
+}
+
+function appendMessage(text, role, cls = '') {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role} ${cls}`;
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function askSuggested(q) {
+  document.getElementById('chatInput').value = q;
+  sendMessage();
+}
+
+document.getElementById('chatInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendMessage();
+});
+</script>
+</body>
+</html>

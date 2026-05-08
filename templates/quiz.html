@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Election Quiz – VoteWise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron: #FF6B00; --ink: #0D0D0D; --cream: #FFF8F0;
+  --green: #138808; --blue: #000080; --white: #FFFFFF; --muted: #6B6B6B;
+  --correct: #138808; --wrong: #D32F2F;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 5%; background: rgba(255,248,240,0.92);
+  backdrop-filter: blur(12px); border-bottom: 2px solid var(--saffron);
+}
+.logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--saffron); text-decoration: none; }
+.logo span { color: var(--green); }
+nav ul { display: flex; gap: 2rem; list-style: none; }
+nav ul a { text-decoration: none; color: var(--ink); font-weight: 500; font-size: 0.95rem; }
+nav ul a:hover { color: var(--saffron); }
+
+.quiz-wrapper {
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 8rem 1rem 4rem;
+}
+
+/* INTRO SCREEN */
+#introScreen { text-align: center; max-width: 600px; }
+.intro-icon { font-size: 5rem; margin-bottom: 1.5rem; }
+#introScreen h1 { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; margin-bottom: 1rem; }
+#introScreen p { color: var(--muted); font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem; }
+.quiz-meta { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+.quiz-meta-item { text-align: center; background: var(--white); border: 1px solid rgba(0,0,0,0.07); border-radius: 12px; padding: 1rem 1.5rem; }
+.quiz-meta-item .val { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: var(--saffron); }
+.quiz-meta-item .lbl { font-size: 0.8rem; color: var(--muted); }
+.btn-start {
+  background: var(--saffron); color: var(--white); border: none;
+  padding: 1.1rem 3rem; font-size: 1.1rem; font-weight: 500; border-radius: 10px;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(255,107,0,0.3);
+}
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,107,0,0.4); }
+
+/* QUIZ CARD */
+#quizScreen { display: none; width: 100%; max-width: 680px; }
+.progress-bar-outer { background: rgba(0,0,0,0.08); border-radius: 100px; height: 6px; margin-bottom: 2rem; }
+.progress-bar-inner { height: 6px; border-radius: 100px; background: linear-gradient(90deg, var(--saffron), var(--saffron-light, #FF9040)); transition: width 0.4s ease; }
+.question-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.question-num { font-size: 0.85rem; color: var(--muted); }
+.question-score { font-size: 0.85rem; color: var(--saffron); font-weight: 500; }
+.question-card { background: var(--white); border-radius: 20px; padding: 2.5rem; border: 1px solid rgba(0,0,0,0.07); }
+.question-text { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; line-height: 1.4; margin-bottom: 2rem; }
+.options-grid { display: grid; gap: 0.8rem; }
+.option-btn {
+  background: var(--cream); border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 12px; padding: 1rem 1.3rem; text-align: left;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+  transition: all 0.2s; color: var(--ink); display: flex; align-items: center; gap: 0.8rem;
+}
+.option-btn:hover:not(:disabled) { border-color: var(--saffron); background: rgba(255,107,0,0.05); }
+.option-btn.correct { border-color: var(--correct); background: rgba(19,136,8,0.08); color: var(--correct); font-weight: 500; }
+.option-btn.wrong { border-color: var(--wrong); background: rgba(211,47,47,0.06); color: var(--wrong); }
+.option-btn:disabled { cursor: default; }
+.option-label { width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.07); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 500; flex-shrink: 0; }
+.option-btn.correct .option-label { background: var(--correct); color: white; }
+.option-btn.wrong .option-label { background: var(--wrong); color: white; }
+
+.explanation {
+  margin-top: 1.5rem; padding: 1.2rem 1.5rem;
+  background: rgba(255,107,0,0.07); border-radius: 12px;
+  border-left: 4px solid var(--saffron); font-size: 0.92rem;
+  color: var(--ink); line-height: 1.7; display: none;
+}
+.explanation.show { display: block; }
+.next-btn {
+  margin-top: 1.5rem; width: 100%; background: var(--ink); color: white;
+  border: none; padding: 1rem; border-radius: 12px; font-size: 1rem;
+  font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s; display: none;
+}
+.next-btn.show { display: block; }
+.next-btn:hover { background: #333; }
+
+/* RESULT SCREEN */
+#resultScreen { display: none; text-align: center; max-width: 580px; }
+.score-circle {
+  width: 160px; height: 160px; border-radius: 50%;
+  border: 6px solid var(--saffron);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  margin: 0 auto 2rem;
+  background: white;
+}
+.score-circle .big { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: var(--saffron); }
+.score-circle .total { color: var(--muted); font-size: 0.9rem; }
+#resultScreen h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900; margin-bottom: 1rem; }
+#resultScreen p { color: var(--muted); font-size: 1rem; line-height: 1.75; margin-bottom: 2rem; }
+.result-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn-retry {
+  background: var(--saffron); color: white; border: none; padding: 0.9rem 2rem;
+  border-radius: 10px; font-size: 1rem; font-weight: 500; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-home {
+  background: transparent; color: var(--ink); border: 2px solid var(--ink); padding: 0.9rem 2rem;
+  border-radius: 10px; font-size: 1rem; font-weight: 500; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; text-decoration: none; display: inline-flex; align-items: center;
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">Vote<span>Wise</span></a>
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/journey">Journey</a></li>
+    <li><a href="/quiz">Quiz</a></li>
+  </ul>
+</nav>
+
+<div class="quiz-wrapper">
+  <!-- INTRO -->
+  <div id="introScreen">
+    <div class="intro-icon">🧠</div>
+    <h1>Election Quiz</h1>
+    <p>Test your knowledge of India's election process, voter rights, and democratic values. Learn something new with every question!</p>
+    <div class="quiz-meta">
+      <div class="quiz-meta-item"><div class="val">8</div><div class="lbl">Questions</div></div>
+      <div class="quiz-meta-item"><div class="val">∞</div><div class="lbl">Learning</div></div>
+      <div class="quiz-meta-item"><div class="val">🇮🇳</div><div class="lbl">Focus: India</div></div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Start Quiz →</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quizScreen">
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="progressBar" style="width:0%"></div>
+    </div>
+    <div class="question-header">
+      <span class="question-num" id="questionNum">Question 1 of 8</span>
+      <span class="question-score" id="questionScore">Score: 0</span>
+    </div>
+    <div class="question-card">
+      <div class="question-text" id="questionText"></div>
+      <div class="options-grid" id="optionsGrid"></div>
+      <div class="explanation" id="explanation"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultScreen">
+    <div class="score-circle">
+      <div class="big" id="finalScore">0</div>
+      <div class="total" id="finalTotal">out of 8</div>
+    </div>
+    <h2 id="resultTitle">Well done!</h2>
+    <p id="resultMessage">Keep learning about your democratic rights!</p>
+    <div class="result-actions">
+      <button class="btn-retry" onclick="retryQuiz()">Try Again 🔄</button>
+      <a href="/" class="btn-home">← Back to Home</a>
+    </div>
+  </div>
+</div>
+
+<script>
+let questions = [];
+let current = 0;
+let score = 0;
+let answered = false;
+
+const labels = ['A', 'B', 'C', 'D'];
+
+async function startQuiz() {
+  document.getElementById('introScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+  const res = await fetch('/api/quiz/questions');
+  questions = await res.json();
+  // shuffle
+  questions.sort(() => Math.random() - 0.5);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  answered = false;
+  document.getElementById('questionNum').textContent = `Question ${current+1} of ${questions.length}`;
+  document.getElementById('questionScore').textContent = `Score: ${score}`;
+  document.getElementById('progressBar').style.width = `${(current/questions.length)*100}%`;
+  document.getElementById('questionText').textContent = q.question;
+  document.getElementById('explanation').classList.remove('show');
+  document.getElementById('nextBtn').classList.remove('show');
+
+  const grid = document.getElementById('optionsGrid');
+  grid.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-label">${labels[i]}</span>${opt}`;
+    btn.addEventListener('click', () => checkAnswer(opt, btn, q));
+    grid.appendChild(btn);
+  });
+}
+
+async function checkAnswer(selected, btn, q) {
+  if (answered) return;
+  answered = true;
+  const res = await fetch('/api/quiz/check', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({question_id: q.id, answer: selected})
+  });
+  const data = await res.json();
+
+  // disable all
+  document.querySelectorAll('.option-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent.trim().slice(1) === data.correct_answer || b.innerHTML.includes(data.correct_answer)) {
+      b.classList.add('correct');
+    }
+  });
+  if (!data.correct) btn.classList.add('wrong');
+  else score++;
+
+  document.getElementById('questionScore').textContent = `Score: ${score}`;
+  const expEl = document.getElementById('explanation');
+  expEl.textContent = '💡 ' + data.explanation;
+  expEl.classList.add('show');
+  document.getElementById('nextBtn').textContent = current < questions.length - 1 ? 'Next Question →' : 'See Results 🏆';
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  document.getElementById('progressBar').style.width = '100%';
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('finalTotal').textContent = `out of ${questions.length}`;
+  const pct = score / questions.length;
+  let title, msg;
+  if (pct === 1) { title = '🏆 Perfect Score!'; msg = 'Outstanding! You know India\'s election process like an expert. Share your score and inspire others to learn!'; }
+  else if (pct >= 0.75) { title = '⭐ Excellent Work!'; msg = 'You have a strong understanding of democratic processes. Keep learning and help spread awareness!'; }
+  else if (pct >= 0.5) { title = '👍 Good Effort!'; msg = 'You\'re on the right track. Explore the Election Journey guide to strengthen your knowledge.'; }
+  else { title = '📚 Keep Learning!'; msg = 'Democracy is worth understanding. Visit our Journey page to learn more about India\'s election process.'; }
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultMessage').textContent = msg;
+}
+
+function retryQuiz() {
+  current = 0; score = 0;
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+  questions.sort(() => Math.random() - 0.5);
+  renderQuestion();
+}
+</script>
+</body>
+</html>

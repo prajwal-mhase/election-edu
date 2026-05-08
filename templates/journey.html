@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Election Journey – VoteWise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron: #FF6B00; --saffron-light: #FF9040;
+  --ink: #0D0D0D; --cream: #FFF8F0;
+  --green: #138808; --blue: #000080;
+  --white: #FFFFFF; --muted: #6B6B6B;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 5%; background: rgba(255,248,240,0.92);
+  backdrop-filter: blur(12px); border-bottom: 2px solid var(--saffron);
+}
+.logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--saffron); letter-spacing: -1px; text-decoration: none; }
+.logo span { color: var(--green); }
+nav ul { display: flex; gap: 2rem; list-style: none; }
+nav ul a { text-decoration: none; color: var(--ink); font-weight: 500; font-size: 0.95rem; transition: color 0.2s; }
+nav ul a:hover { color: var(--saffron); }
+
+.page-header {
+  padding: 10rem 5% 4rem;
+  background: linear-gradient(135deg, var(--ink) 0%, #1a1a2e 100%);
+  color: var(--white); text-align: center;
+}
+.page-header .tag { font-size: 0.8rem; color: var(--saffron); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem; }
+.page-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; margin-bottom: 1rem; }
+.page-header p { color: rgba(255,255,255,0.65); max-width: 580px; margin: 0 auto; font-size: 1.05rem; line-height: 1.8; }
+
+/* TIMELINE */
+.timeline-section { padding: 5rem 5%; max-width: 900px; margin: 0 auto; }
+.timeline { position: relative; }
+.timeline::before {
+  content: ''; position: absolute; left: 50%; transform: translateX(-50%);
+  top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(to bottom, var(--saffron), var(--green));
+}
+
+.tl-item {
+  display: grid; grid-template-columns: 1fr 60px 1fr; gap: 0; margin-bottom: 3rem;
+  align-items: start;
+}
+.tl-content {
+  background: var(--white); border-radius: 16px; padding: 2rem;
+  border: 1px solid rgba(0,0,0,0.07);
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+}
+.tl-content:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); }
+.tl-left { padding-right: 2rem; }
+.tl-right { padding-left: 2rem; }
+.tl-empty { visibility: hidden; }
+
+.tl-item:nth-child(even) .tl-content-area { grid-column: 3; }
+.tl-item:nth-child(even) .tl-empty-area { grid-column: 1; }
+
+.tl-center {
+  display: flex; align-items: center; justify-content: center; padding-top: 1.5rem; z-index: 1;
+}
+.tl-dot {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--white); border: 3px solid var(--saffron);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; position: relative; z-index: 2;
+  box-shadow: 0 0 0 6px rgba(255,107,0,0.1);
+}
+.tl-content .step-label {
+  font-size: 0.75rem; font-weight: 500; color: var(--saffron);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;
+}
+.tl-content h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.7rem; }
+.tl-content p { color: var(--muted); font-size: 0.95rem; line-height: 1.75; }
+.tl-content .highlight {
+  display: inline-block; margin-top: 1rem; padding: 0.4rem 0.9rem;
+  background: rgba(255,107,0,0.08); border-radius: 6px;
+  font-size: 0.85rem; color: var(--saffron); font-weight: 500;
+}
+
+/* VOTER GUIDE */
+.voter-guide { background: var(--ink); padding: 5rem 5%; }
+.voter-guide h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; color: var(--white); text-align: center; margin-bottom: 0.5rem; }
+.voter-guide .sub { text-align: center; color: rgba(255,255,255,0.55); margin-bottom: 3rem; }
+.guide-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto; }
+.guide-card {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px; padding: 2rem;
+}
+.guide-card .icon { font-size: 2rem; margin-bottom: 1rem; }
+.guide-card h3 { color: var(--white); font-family: 'Playfair Display', serif; margin-bottom: 0.7rem; }
+.guide-card ul { list-style: none; }
+.guide-card ul li { color: rgba(255,255,255,0.65); font-size: 0.9rem; padding: 0.35rem 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.guide-card ul li:last-child { border-bottom: none; }
+.guide-card ul li::before { content: '→ '; color: var(--saffron); }
+
+footer { background: var(--ink); color: rgba(255,255,255,0.6); text-align: center; padding: 2rem 5%; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.08); }
+footer strong { color: var(--saffron); }
+
+@media (max-width: 700px) {
+  .timeline::before { left: 24px; }
+  .tl-item { grid-template-columns: 48px 1fr; }
+  .tl-center { padding-top: 1.2rem; padding-right: 0; }
+  .tl-right, .tl-left { padding-left: 1.2rem; padding-right: 0; }
+  .tl-empty { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Vote<span>Wise</span></a>
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/journey">Journey</a></li>
+    <li><a href="/quiz">Quiz</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <h1>The Election Journey 🗳️</h1>
+  <p>From the announcement of elections to the declaration of results — follow every step of India's democratic process.</p>
+</div>
+
+<div class="timeline-section">
+  <div class="timeline">
+
+    <div class="tl-item">
+      <div class="tl-content tl-left">
+        <div class="step-label">Step 1</div>
+        <h3>Election Schedule Announced</h3>
+        <p>The Election Commission of India (ECI) announces the election schedule. This instantly triggers the <strong>Model Code of Conduct (MCC)</strong>, restricting government spending and promises during the election period.</p>
+        <span class="highlight">📋 MCC enforced from day 1</span>
+      </div>
+      <div class="tl-center"><div class="tl-dot">📢</div></div>
+      <div class="tl-empty"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-empty"></div>
+      <div class="tl-center"><div class="tl-dot">📝</div></div>
+      <div class="tl-content tl-right">
+        <div class="step-label">Step 2</div>
+        <h3>Nomination of Candidates</h3>
+        <p>Anyone wishing to contest must file a nomination form with the Returning Officer. A <strong>security deposit</strong> is required (₹25,000 for Lok Sabha). Nominations are then scrutinized for validity.</p>
+        <span class="highlight">🔍 Scrutiny follows filing</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-content tl-left">
+        <div class="step-label">Step 3</div>
+        <h3>Withdrawal of Candidates</h3>
+        <p>After scrutiny, candidates have a window to <strong>withdraw their nomination</strong> without penalty. After this period, the final list of candidates is published and symbols are allotted.</p>
+        <span class="highlight">🏛️ Symbols assigned post-withdrawal</span>
+      </div>
+      <div class="tl-center"><div class="tl-dot">✋</div></div>
+      <div class="tl-empty"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-empty"></div>
+      <div class="tl-center"><div class="tl-dot">📣</div></div>
+      <div class="tl-content tl-right">
+        <div class="step-label">Step 4</div>
+        <h3>Election Campaign</h3>
+        <p>Candidates and parties campaign across the constituency — rallies, door-to-door visits, advertisements. Campaigning must <strong>cease 48 hours</strong> before polling day (the "silence period").</p>
+        <span class="highlight">🔇 48-hr silence before voting</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-content tl-left">
+        <div class="step-label">Step 5</div>
+        <h3>Polling Day</h3>
+        <p>Voters visit their assigned polling booth, verify identity, receive a ballot (digital via EVM), and press the button next to their chosen candidate. <strong>VVPAT</strong> provides paper trail. Ink is applied to finger to prevent double voting.</p>
+        <span class="highlight">🖊️ Indelible ink on finger</span>
+      </div>
+      <div class="tl-center"><div class="tl-dot">🗳️</div></div>
+      <div class="tl-empty"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-empty"></div>
+      <div class="tl-center"><div class="tl-dot">🔒</div></div>
+      <div class="tl-content tl-right">
+        <div class="step-label">Step 6</div>
+        <h3>Sealing & Transportation of EVMs</h3>
+        <p>After polling closes, EVMs are sealed in the presence of candidates' agents. They are transported under <strong>tight security</strong> to counting centers and stored in strongrooms with multi-layer security.</p>
+        <span class="highlight">🛡️ Multi-party seal verification</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-content tl-left">
+        <div class="step-label">Step 7</div>
+        <h3>Vote Counting</h3>
+        <p>On counting day, EVMs are opened round-by-round in counting halls. Representatives of all candidates monitor each table. Postal ballots (for service voters) are counted first. Results are updated in real time.</p>
+        <span class="highlight">📊 Round-by-round tallying</span>
+      </div>
+      <div class="tl-center"><div class="tl-dot">🔢</div></div>
+      <div class="tl-empty"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-empty"></div>
+      <div class="tl-center"><div class="tl-dot">🏆</div></div>
+      <div class="tl-content tl-right">
+        <div class="step-label">Step 8</div>
+        <h3>Result Declaration</h3>
+        <p>The candidate with the <strong>most votes (First-Past-The-Post)</strong> in a constituency wins. The Returning Officer issues a certificate of election. The winning party or coalition then forms the government.</p>
+        <span class="highlight">🇮🇳 Democracy in action</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- VOTER GUIDE -->
+<div class="voter-guide" id="register">
+  <h2>Voter Registration Guide</h2>
+  <div class="sub">Everything you need to register and vote in India</div>
+  <div class="guide-cards">
+    <div class="guide-card">
+      <div class="icon">📋</div>
+      <h3>Who Can Register?</h3>
+      <ul>
+        <li>Indian citizen aged 18+</li>
+        <li>Ordinary resident of India</li>
+        <li>Not of unsound mind</li>
+        <li>Not disqualified by law</li>
+      </ul>
+    </div>
+    <div class="guide-card">
+      <div class="icon">📄</div>
+      <h3>Documents Needed</h3>
+      <ul>
+        <li>Proof of Age (Birth Certificate / 10th Marksheet)</li>
+        <li>Proof of Address (Aadhaar / Utility Bill)</li>
+        <li>Passport-size photograph</li>
+        <li>Aadhaar Card (recommended)</li>
+      </ul>
+    </div>
+    <div class="guide-card">
+      <div class="icon">💻</div>
+      <h3>How to Register</h3>
+      <ul>
+        <li>Online: voters.eci.gov.in</li>
+        <li>Voter Helpline App</li>
+        <li>Form 6 at local ERO office</li>
+        <li>Through Booth Level Officers</li>
+      </ul>
+    </div>
+    <div class="guide-card">
+      <div class="icon">📅</div>
+      <h3>Key Deadlines</h3>
+      <ul>
+        <li>Register well before election date</li>
+        <li>Check electoral roll before each election</li>
+        <li>Update address before moving</li>
+        <li>Corrections via Form 8</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<footer>
+</footer>
+
+</body>
+</html>
