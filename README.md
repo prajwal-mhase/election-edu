@@ -129,11 +129,3 @@ election-edu/
 - VVPAT paper trail system
 
 ---
-
-## 📜 License
-
-MIT License – free to use, modify, and distribute.
-
----
-
-*Built with ❤️ for Indian Democracy | PromptWars 2026*
