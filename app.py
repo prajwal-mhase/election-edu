@@ -1,5 +1,6 @@
 import os
 from flask import Flask, render_template, request, jsonify
+import requests
 
 app = Flask(__name__)
 
@@ -21,7 +22,7 @@ def journey():
 @app.route("/api/ask", methods=["POST"])
 def ask_ai():
     """AI-powered Q&A about elections using Gemini."""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     question = data.get("question", "").strip()
     if not question:
         return jsonify({"error": "No question provided"}), 400
@@ -30,10 +31,6 @@ def ask_ai():
         return jsonify({"answer": "AI assistant is not configured. Please set GOOGLE_API_KEY environment variable."}), 200
 
     try:
-        import google.generativeai as genai
-
-        genai.configure(api_key=GOOGLE_API_KEY)
-        model = genai.GenerativeModel("gemini-1.5-flash")
         prompt = f"""You are ElectionBot, a friendly and knowledgeable educator about democratic election processes.
         
 Answer the following question about elections in a clear, engaging, educational way suitable for all ages.
@@ -42,8 +39,26 @@ Keep your answer concise (2-4 sentences) and factual. Focus on Indian elections 
 Question: {question}
 
 Answer:"""
-        response = model.generate_content(prompt)
-        return jsonify({"answer": response.text})
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GOOGLE_API_KEY}"
+        payload = {
+            "contents": [
+                {
+                    "parts": [{"text": prompt}]
+                }
+            ]
+        }
+        response = requests.post(url, json=payload, timeout=30)
+        response.raise_for_status()
+        response_data = response.json()
+        answer = (
+            response_data.get("candidates", [{}])[0]
+            .get("content", {})
+            .get("parts", [{}])[0]
+            .get("text", "")
+        ).strip()
+        if not answer:
+            raise ValueError("Empty response from Gemini API")
+        return jsonify({"answer": answer})
     except Exception as e:
         return jsonify({"answer": f"Sorry, I couldn't process that right now. Please try again. ({str(e)})"}), 200
 
