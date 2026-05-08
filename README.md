@@ -32,7 +32,7 @@ Built for PromptWars Challenge 1 using Google Cloud + Gemini AI.
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/YOUR_USERNAME/election-edu.git
+git clone https://github.com/prajwal-mhase/election-edu.git
 cd election-edu
 ```
 
@@ -52,38 +52,6 @@ python app.py
 ```
 
 Visit `http://localhost:8080`
-
----
-
-## ☁️ Deploy to Google Cloud Run
-
-### Prerequisites
-- Google Cloud SDK installed
-- A GCP project with billing enabled
-- Google AI Studio API key (free at https://aistudio.google.com)
-
-### Step 1: Authenticate
-```bash
-gcloud auth login
-gcloud config set project YOUR_PROJECT_ID
-```
-
-### Step 2: Enable required APIs
-```bash
-gcloud services enable run.googleapis.com
-gcloud services enable cloudbuild.googleapis.com
-```
-
-### Step 3: Build & Deploy
-```bash
-gcloud run deploy election-edu \
-  --source . \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --set-env-vars GOOGLE_API_KEY=your_api_key_here
-```
-
-Your app will be live at a `*.run.app` URL!
 
 ---
 
@@ -129,11 +97,3 @@ election-edu/
 - VVPAT paper trail system
 
 ---
-
-## 📜 License
-
-MIT License – free to use, modify, and distribute.
-
----
-
-*Built with ❤️ for Indian Democracy | PromptWars 2026*
